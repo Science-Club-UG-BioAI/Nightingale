@@ -1,4 +1,6 @@
 from torch import nn
+import torch.nn as nn
+import math
 
 class EncoderTransformer:
   def __init__(self, d_model: int, nhead: int, dim_feedforward: int, dropout: float = 0.1):
@@ -40,3 +42,17 @@ class EncoderTransformer:
     x = self.dropout(x)
     x = self.norm2(x)
     return x
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model: int, max_len=800):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        positions = torch.arange(0, max_len, dtype = torch.float32).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2, dtype=torch.float32) * (-math.log(10_000.0) / d_model))
+        pe[:, 0::2] = torch.sin(positions * div_term)
+        pe[:, 1::2] = torch.cos(positions * div_term)
+
+        self.register_buffer("pe", pe) 
+
+    def forward(self, x: torch.tensor):
+        return x + self.pe[:x.size(1)]
