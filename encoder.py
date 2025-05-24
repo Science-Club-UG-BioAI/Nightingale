@@ -1,0 +1,58 @@
+from torch import nn
+import torch.nn as nn
+import math
+
+class EncoderTransformer:
+  def __init__(self, d_model: int, nhead: int, dim_feedforward: int, dropout: float = 0.1):
+    if not isinstance(d_model, int):
+        raise TypeError(f"d_model must be int, got {type(d_model).__name__}")
+    if not isinstance(nhead, int):
+        raise TypeError(f"nhead must be int, got {type(nhead).__name__}")
+    if not isinstance(dim_feedforward, int):
+        raise TypeError(f"dim_feedforward must be int, got {type(dim_feedforward).__name__}")
+    if not isinstance(dropout, float):
+        raise TypeError(f"dropout must be float, got {type(dropout).__name__}")
+    self.multiheadAttention = nn.MultiheadAttention(
+        d_model,
+        nhead,
+        dropout=dropout,
+        batch_first=True
+    )
+    self.sequential = nn.Sequential(
+        nn.Linear(
+          d_model,
+          dim_feedforward
+        ),
+        nn.ReLU(),
+        nn.Dropout(dropout),
+        nn.Linear(
+          dim_feedforward,
+          d_model
+        )
+    )
+    self.norm1 = nn.LayerNorm(d_model)
+    self.norm2 = nn.LayerNorm(d_model)
+    self.dropout = nn.Dropout(dropout)
+
+  def forward(self,x):
+    x = self.multiheadAttention(x)
+    x = self.dropout(x)
+    x = self.norm1(x)
+    x = self.sequential(x)
+    x = self.dropout(x)
+    x = self.norm2(x)
+    return x
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model: int, max_len=800):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        positions = torch.arange(0, max_len, dtype = torch.float32).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2, dtype=torch.float32) * (-math.log(10_000.0) / d_model))
+        pe[:, 0::2] = torch.sin(positions * div_term)
+        pe[:, 1::2] = torch.cos(positions * div_term)
+
+        self.register_buffer("pe", pe) 
+
+    def forward(self, x: torch.tensor):
+        return x + self.pe[:x.size(1)]
