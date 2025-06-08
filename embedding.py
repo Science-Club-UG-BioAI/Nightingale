@@ -21,7 +21,7 @@ class PositionalEncoding(nn.Module):
 
 class Amino_embeder(nn.Module):
     def __init__(self, vocab_size, d_model):
-        super().__init__
+        super().__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
         self.pe = PositionalEncoding(d_model)
         
