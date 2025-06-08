@@ -10,7 +10,7 @@ class MonMothmaTheGOAT(nn.Module):
         super().__init__()
         
         self.src_embed = Amino_embeder(vocab_size, d_model)
-        self.tgt_emved = Amino_embeder(vocab_size, d_model)
+        self.tgt_emved = Amino_embeder(cla, d_model)
         
         self.encoder_layers = nn.ModuleList([
             EncoderTransformer(d_model, nhead, neuron, dropout)
