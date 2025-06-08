@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn as nn
 import math
 
-class EncoderTransformer:
+class EncoderTransformer(nn.Module):
   def __init__(self, d_model: int, nhead: int, dim_feedforward: int, dropout: float = 0.1):
     if not isinstance(d_model, int):
         raise TypeError(f"d_model must be int, got {type(d_model).__name__}")
