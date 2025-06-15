@@ -7,7 +7,8 @@ import torch.nn as nn
 
 
 class Tokenizer():
-    pass
+    def __init__(self,csvPath,max_seq=None,max_desc=None):
+        pass
 
 
 
