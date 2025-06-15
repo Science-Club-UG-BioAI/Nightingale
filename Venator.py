@@ -32,24 +32,6 @@ class MonMothmaTheGOAT(nn.Module):
         
         return self.output_layer(tgt)
         
-        
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+     
